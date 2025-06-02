@@ -27,28 +27,42 @@
   <div id="dayCount"></div>
 
   <script>
-    const startDate = new Date('2023-10-07T03:29:00Z'); // 06:29 בישראל
+    const startDate = new Date('2023-10-07T03:29:00Z'); // 06:29 שעון ישראל (UTC+3)
 
     function updateTimer() {
       const now = new Date();
       const diffMs = now - startDate;
 
-      const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
-      const warDay = days + 1;
+      // חישוב זמן שחלף
+      const totalDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
+      // יצירת מחסום יומי ב־06:29 שעון ישראל (03:29 UTC)
+      const checkpoint = new Date(Date.UTC(
+        now.getUTCFullYear(),
+        now.getUTCMonth(),
+        now.getUTCDate(),
+        3, 29 // שעה 03:29 ב־UTC = 06:29 בישראל
+      ));
+
+      let warDay = totalDays + 1;
+      if (now < checkpoint) {
+        warDay--; // עדיין לא התחיל היום החדש
+      }
+
+      // חישוב שעות, דקות ושניות
       const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
       const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
       const seconds = Math.floor((diffMs / 1000) % 60);
 
       document.getElementById('timer').textContent =
-        `${days} ימים, ${hours} שעות, ${minutes} דקות, ${seconds} שניות`;
+        `${totalDays} ימים, ${hours} שעות, ${minutes} דקות, ${seconds} שניות`;
 
       document.getElementById('dayCount').textContent =
         `היום הוא היום ה־${warDay} למלחמה.`;
     }
 
     setInterval(updateTimer, 1000);
-    updateTimer(); // להריץ מיד
+    updateTimer(); // להריץ מיד עם טעינת הדף
   </script>
 </body>
 </html>
